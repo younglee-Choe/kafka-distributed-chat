@@ -1,0 +1,22 @@
+.room__roomList {
+    height: 100%;
+    background-color: #f9f5eb;
+    flex: 0.2;
+    padding: 20px;
+    border-right: 1px solid #fdfdfd;
+}
+.room__createRoom {
+  width: 100%;
+  height: 100vh;
+  background-color: #f9f5eb;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+.room__createRoom-h2 {
+  height: 20%;
+}
+.room__createRoom-btn-container {
+  margin: 10%;
+}
