@@ -1,5 +1,15 @@
 .App {
   text-align: center;
+  height: 100vh;
+}
+.app__main {
+  height: 100%;
+}
+.app__header {
+  height: 5%;
+}
+.app__body {
+  height: 95%;
 }
 
 .App-logo {

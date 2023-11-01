@@ -1,9 +1,35 @@
 .room__roomList {
-    height: 100%;
-    background-color: #f9f5eb;
-    flex: 0.2;
-    padding: 20px;
-    border-right: 1px solid #fdfdfd;
+  height: 100%;
+  background-color: #f9f5eb;
+  flex: 0.2;
+  padding: 0px 20px 20px 20px;
+  border-right: 1px solid #fdfdfd;
+}
+.roomlist__mainHeader {
+  width: 100%;
+  height: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  vertical-align: middle;
+  background-color: #f9f5eb;
+}
+.roomlist__content-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.roomlist__content-name {
+  width: 50%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bolder;
+}
+.room__roomList-grid {
+  height: 90%;
+  overflow-y: scroll;
 }
 .room__createRoom {
   width: 100%;
@@ -17,6 +43,20 @@
 .room__createRoom-h2 {
   height: 20%;
 }
+.room__createRoom-input-container {
+  width: 100%;
+}
+.room__createRoom__input {
+  width: 30%;
+}
 .room__createRoom-btn-container {
   margin: 10%;
+}
+
+.MuiListItemText-primary:hover {
+  cursor: pointer;
+  color: rgb(200, 16, 16);
+}
+.room__roomList-item__selected{
+  color: rgb(200, 16, 16);
 }
