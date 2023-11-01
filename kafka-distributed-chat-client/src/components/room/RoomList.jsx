@@ -3,38 +3,33 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grid, List, ListItem, ListItemText, styled } from '@mui/material';
 import axios from 'axios';
+import enterRoom from '../../api/enterRoom.js';
 
 const RoomList = () => {
     const navigate = useNavigate();
     const [ chatList, setChatList ] = useState([]);
+    const [ selected, setSelected ] = useState("");
 
-    const memberIdSession = sessionStorage.getItem("memberId");
+    const memberId = sessionStorage.getItem("memberId");
+    const memberName = sessionStorage.getItem("memberName");
+
+    const croomListUrl = "/room/roomList";
+    const roomListData = {
+        memberId: memberId
+    };
 
     const Demo = styled('div')(({ theme }) => ({
         backgroundColor: theme.palette.background.paper,
         borderColor: 'black',
     }));
 
-    const chatListUrl = "/room/roomList";
-    const chatListData = {
-        memberId: memberIdSession
-    }
-
     const onClickChatRoomItem = (roomId) => {
-        console.log("roomId:", roomId);
-        axios.post("/chat/chatRoom", null, {
-            params: {
-                roomId: roomId
-            }
-        })
-        .then((res) => {
-            console.log("res", res);
-            navigate("/chat/"+ roomId);
-        })
+        setSelected(roomId);
+        enterRoom(roomId);
     };
 
     useEffect(() => {
-        axios.post(chatListUrl, chatListData, 
+        axios.post(croomListUrl, roomListData, 
             {
                 headers: {
                     'Content-Type': 'application/json'
@@ -56,16 +51,21 @@ const RoomList = () => {
 
     return (
         <div className="room__roomList">
-            <h2 className="room__roomList-h2">'{memberIdSession}'의 채팅방 목록</h2>
+            <header className="roomlist__mainHeader">
+                <h3 className="roomlist__content-container">[<div className="roomlist__content-name">{memberName}</div>]의 채팅방 목록</h3>
+            </header>
             {chatList.length > 0 ?
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={6} className="room__roomList-grid">
                     <Demo>
                         <List>
                             {chatList.map((item, idx) => (
                                 <ListItem key={idx}>
                                     <ListItemText
-                                        id={"room__roomList-item-"+idx}
+                                        className={`${selected === item.roomId ? "room__roomList-item__selected" : ""}`}
+                                        id={"room__roomList-item-" + idx}
+                                        primaryTypographyProps={{fontSize: "1rem"}}
                                         primary={item.roomName}
+                                        secondaryTypographyProps={{fontSize: "0.8rem"}}
                                         secondary={item.roomId}
                                         onClick={() => onClickChatRoomItem(item.roomId)}
                                     />
