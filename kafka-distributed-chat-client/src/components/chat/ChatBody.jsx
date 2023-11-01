@@ -1,50 +1,44 @@
-import '../../css/Chat.css'
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import "../../css/Chat.css";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const ChatBody = ({ messages, typingStatus, lastMessageRef }) => {
+const ChatBody = ({ messages }) => {
     const navigate = useNavigate()
 
     const handleLeaveChat = () => {
-        localStorage.removeItem('userName')
-        navigate('/')
-        window.location.reload()
+        localStorage.removeItem("memberName");
+        navigate("/");
+        window.location.reload();
     }
 
     return (
         <>
             <header className="chat__mainHeader">
-                <p>Member name 표시하기</p>
+                <p>채팅방에 있는 멤버들 이름</p>
                 <button className="leaveChat__btn" onClick={handleLeaveChat}>
-                    LEAVE CHAT
+                    채팅방 나가기
                 </button>
             </header>
 
             <div className="message__container">
-                {messages.map((message) => 
-                    message.name === localStorage.getItem('userName') ? 
+                {messages.map((message, idx) => 
+                    message.memberName === sessionStorage.getItem('memberName') ? 
                     (
-                        <div className="message__chats" key={message.id}>
-                            <p className="sender__name-me">ME({message.name})</p>
+                        <div className="message__chats" key={idx}>
+                            <p className="sender__name-me">ME({message.memberName})</p>
                             <div className="message__sender">
-                                <p>{message.text}</p>
+                                <p>{message.message}</p>
                             </div>
                         </div>
                     ) : (
-                        <div className="message__chats" key={message.id}>
-                            <p className="sender__name-other">{message.name}</p>
+                        <div className="message__chats" key={idx}>
+                            <p className="sender__name-other">{message.memberName}</p>
                             <div className="message__recipient">
-                                <p>{message.text}</p>
+                                <p>{message.message}</p>
                             </div>
                         </div>
                     )
                 )}
-            
-                <div className="message__status">
-                    <p>{typingStatus}</p>
-                </div>
-
-                <div ref={lastMessageRef} />
             </div>
         </>
     )
