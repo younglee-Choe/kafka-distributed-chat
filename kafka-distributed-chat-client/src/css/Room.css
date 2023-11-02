@@ -21,11 +21,13 @@
   justify-content: space-between;
 }
 .roomlist__content-name {
-  width: 50%;
+  width: fit-content;
+  max-width: 60%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: bolder;
+  margin: auto;
 }
 .room__roomList-grid {
   height: 90%;
@@ -55,8 +57,9 @@
 
 .MuiListItemText-primary:hover {
   cursor: pointer;
-  color: rgb(200, 16, 16);
+  font-weight: 900;
 }
 .room__roomList-item__selected{
+  font-weight: 900;
   color: rgb(200, 16, 16);
 }

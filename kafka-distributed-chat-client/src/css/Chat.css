@@ -46,6 +46,13 @@
   padding: 20px;
   background-color: #f9f5eb;
 }
+.chat__memberList-container {
+  display: flex;
+}
+.chat__memberList-item {
+  padding-inline: 0.3rem;
+  color: #3e3e3e;
+}
 .leaveChat__btn {
   padding: 10px;
   width: 150px;
@@ -100,29 +107,56 @@
 .sendBtn:hover {
   background-color: rgb(129, 201, 129);
 }
+.message__date-other {
+  height: 100%;
+  align-self: flex-end;
+  font-size: small;
+  color:rgb(122, 122, 122);
+}
+.message__date-me {
+  height: 100%;
+  align-self: flex-end;
+  font-size: small;
+  color:rgb(122, 122, 122);
+}
 .message__recipient {
   background-color: #f5ccc2;
-  width: 300px;
+  width: 15rem;
+  max-width: 20rem;
   padding: 10px;
   border-radius: 10px;
-  font-size: 15px;
+  margin-right: 0.5rem;
+  font-size: 1rem;
 }
 .message__sender {
   background-color: rgb(194, 243, 194);
-  max-width: 300px;
+  width: 15rem;
+  max-width: 20rem;
   padding: 10px;
   border-radius: 10px;
-  margin-left: auto;
-  font-size: 15px;
+  margin-left: 0.5rem;
+  font-size: 1rem;
 }
 .message__chats > p {
   font-size: 13px;
 }
 .sender__name-me {
   text-align: right;
+  font-weight: 600;
 }
 .sender__name-other {
   text-align: left;
+  font-weight: 600;
+}
+.message__content-me {
+  display: flex;
+  width: fit-content;
+  margin-left: auto;
+}
+.message__content-other {
+  display: flex;
+  width: fit-content;
+  margin-right: auto;
 }
 .message__status {
   position: fixed;

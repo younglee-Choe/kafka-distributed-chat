@@ -1,21 +1,19 @@
 .header__container {
     width: 100%;
-    /* height: auto; */
     display: flex;
+    justify-content: flex-start;
     flex-direction: row;
 }
 .header-log-out__btn {
-    width: 10%;
-    float: right;
+    margin-left: auto;
 }
 .navbar__container {
-    width: 100%;
     float: left;
     display: flex;
     flex-direction: row;
+    margin-right: auto;
 }
 .navbar__link {
-    /* width: 100%; */
     padding-inline: 2rem;
     text-decoration: none;
 }

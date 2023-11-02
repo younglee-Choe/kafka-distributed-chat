@@ -1,11 +1,11 @@
 .login-fail__toast {
-    width: 26%;
+  width: 26%;
 }
 .home__btn {
-    width: 100%;
+  width: 100%;
 }
 .home-log-in__btn, .home-sign-up__btn {
-    width: 10%;
+  width: fit-content;
 }
 .home__container--logged-in {
   width: 100%;
