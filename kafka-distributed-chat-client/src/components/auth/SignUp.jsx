@@ -15,7 +15,7 @@ const SignUp = () => {
     const signupData = {
         "memberId": userId,
         "password": userPassword,
-        "name": userName
+        "memberName": userName
     };
 
     const onClickSignUp = () => {
