@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grid, List, ListItem, ListItemText, styled } from '@mui/material';
 import axios from 'axios';
-import enterRoom from '../../api/enterRoom.js';
+import enterRoom from '../../api/enterRoom';
 
 const RoomList = () => {
     const navigate = useNavigate();
@@ -52,7 +52,12 @@ const RoomList = () => {
     return (
         <div className="room__roomList">
             <header className="roomlist__mainHeader">
-                <h3 className="roomlist__content-container">[<div className="roomlist__content-name">{memberName}</div>]의 채팅방 목록</h3>
+                <h3 className="roomlist__content-container">
+                    <div className="roomlist__content-name">
+                        {memberName}
+                    </div>
+                    의 채팅방 목록
+                </h3>
             </header>
             {chatList.length > 0 ?
                 <Grid item xs={12} md={6} className="room__roomList-grid">

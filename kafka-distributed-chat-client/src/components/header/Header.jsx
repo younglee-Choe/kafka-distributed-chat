@@ -9,6 +9,7 @@ function Header() {
     const onClickLogout = () => {
         sessionStorage.removeItem("memberId");
         navigate("/");
+        window.location.reload();
     }
 
     return (
