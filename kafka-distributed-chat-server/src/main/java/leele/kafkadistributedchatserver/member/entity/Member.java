@@ -24,7 +24,7 @@ public class Member {
     private String password;
 
     @Column(name = "member_name")
-    private String name;
+    private String memberName;
 
     @Column(name = "member_role")
     private String role;
