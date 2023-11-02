@@ -35,7 +35,7 @@ function App() {
               <Route path="/room/createRoom" element={<CreateRoom/>}></Route>
               <Route path="/room/roomList" element={<RoomList/>}></Route>
               <Route path="/room/searchRoom" element={<SearchRoom/>}></Route>
-              <Route path="/chat" element={<ChatPage/>}></Route>
+              <Route path="/sub/chat/:roomId" element={<ChatPage/>}></Route>
               <Route path="/signup" element={<SignUp/>}></Route>
               <Route path="/" element={<LogIn/>}></Route>
             </Routes>
