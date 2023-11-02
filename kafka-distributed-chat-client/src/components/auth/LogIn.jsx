@@ -7,11 +7,12 @@ import { Button, Box, TextField } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 
 const LogIn = () => {
-    const navigate = useNavigate();
-    const memberIdSession = sessionStorage.getItem("memberId");
+    const navigate = useNavigate();    
     const [ userId, setUserId ] = useState('');
     const [ userPassword, setUserPassword ] = useState('');
     const [ isSession, setSession ] = useState(true);
+
+    const memberId = sessionStorage.getItem("memberId");
 
     const loginUrl = "/auth/login";
     const loginData = {
@@ -32,9 +33,11 @@ const LogIn = () => {
 
                 if(res.data.memberId === userId) {
                     console.log("로그인 성공");
-                    sessionStorage.setItem("memberId", userId);
+                    sessionStorage.setItem("memberId", res.data.memberId);
+                    sessionStorage.setItem("memberName", res.data.memberName);
                     setSession(true);
                     navigate('/room/roomList');
+                    window.location.reload();
                 } else {
                     toast.error(<><h4>로그인 실패</h4>아이디 또는 비밀번호를 다시 입력해주세요</>)
                 }
@@ -49,12 +52,10 @@ const LogIn = () => {
     };
 
     useEffect(() => {
-        console.log("memberIdSession: ", memberIdSession);
-        console.log("isSession: ", isSession);
-        if(memberIdSession === null) {
+        if(memberId === null) {
             setSession(false);
         }
-    }, [memberIdSession])
+    }, [memberId])
 
     return (
         <div className="home">
