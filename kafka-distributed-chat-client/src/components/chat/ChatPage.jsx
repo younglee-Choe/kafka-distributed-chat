@@ -9,10 +9,9 @@ import RoomList from '../room/RoomList';
 // 웹소켓에 연결할 때 STOMP 클라이언트 생성
 function ChatPage() {
     const [ chatList, setChatList ] = useState([]);
-    const [ message, setMessages ] = useState('');
+    const [ message, setMessages ] = useState("");
   
-    // const roomId = useParams();
-    const roomId = {roomId};
+    const roomId = useParams().roomId;
     const memberName = sessionStorage.getItem("memberName");
     const date = new Date();
     const client = useRef({});
@@ -37,8 +36,8 @@ function ChatPage() {
           roomId: roomId,
           memberName: memberName,
           message: message,
-          date: date
-        }), // 형식에 맞게 수정해서 보내야 함
+          date: date,
+        }),
       });
   
       setMessages('');
@@ -49,19 +48,21 @@ function ChatPage() {
         // 메시지의 payload는 body.body에 실려옴
         const json_body = JSON.parse(body.body);
         setChatList((_msg_list) => [
-            ..._msg_list, json_body
+          ..._msg_list, json_body
         ]);
       });
     };
   
-    const handleChange = (e) => { // 채팅 입력 시 state 값 설정
+    const handleChange = (e) => {
       setMessages(e.target.value);
     };
   
     const handleSubmit = (e, message) => { // 보내기 버튼 눌렀을 때 publish
       e.preventDefault();
-  
-      publish(message);
+
+      if(message !== "") {  
+        publish(message);
+      }
     };
   
     const disconnect = () => { // 연결이 끊겼을 때 
@@ -73,6 +74,7 @@ function ChatPage() {
       
       return () => disconnect();
     }, []);
+    
     return (
       <div className="chat">
         <RoomList />
@@ -82,7 +84,7 @@ function ChatPage() {
             <form className="form" onSubmit={(e) => handleSubmit(e, message)}>
               <input
                 type="text"
-                placeholder="Write message"
+                placeholder="메시지 입력"
                 className="message"
                 value={message}
                 onChange={handleChange}
