@@ -26,7 +26,7 @@ public class SignupService {
         Member member = Member.builder()
                 .memberId(params.getMemberId())
                 .password(encryptedPassword)
-                .name(params.getName())
+                .memberName(params.getMemberName())
                 .role("ROLE_MEMBER")
                 .joinDate(LocalDateTime.now())
                 .build();
