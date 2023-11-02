@@ -64,11 +64,11 @@ public class LoginController {
                 System.out.println("❌[User] Password does not match! " + params.getPassword() + ", " + dbPassword);
                 return ResponseEntity.ok(null);
             } else {
-                System.out.println("⭕️[User] Password matches! " + params.getPassword() + ", " + dbPassword);
+                System.out.println("[User] Password matches! " + params.getPassword() + ", " + dbPassword);
 
                 return ResponseEntity.ok(Member.builder()
                         .memberId(entity.getMemberId())
-                        .name(entity.getName())
+                        .memberName(entity.getMemberName())
                         .build());
             }
         } catch (Exception e) {
