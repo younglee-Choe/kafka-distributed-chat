@@ -14,8 +14,6 @@ const CreateRoom = () => {
   const createRoomUrl = "/room/createRoom";
   const memberId = sessionStorage.getItem("memberId");
 
-  const memberIdSession = sessionStorage.getItem("memberId");
-
   const createRoomHandler = (roomName) => {
     if(roomName !== "" && memberId !== null) {
       setClick(true);
@@ -33,7 +31,7 @@ const CreateRoom = () => {
     } else if(memberId === null) {
       toast.warn(<div><h4>채팅방 생성 실패</h4>로그인이 필요합니다</div>);
     } else {
-      toast.warn(<div><h4>채팅방 생성 실패</h4>채팅방 이름을 설정해주세요</div>);
+      toast.error(<div><h4>채팅방 생성 실패</h4>채팅방 이름을 다시 입력해 주세요</div>);
     }
   };
 
@@ -42,8 +40,9 @@ const CreateRoom = () => {
       <h2 className="room__createRoom-h2">Create Room</h2>
       <div className="room__createRoom-input-container">
         <TextField 
+          className="room__createRoom__input"
           id="room__input"
-          label="Room name"
+          label="채팅방 이름을 입력해 주세요"
           variant="filled"
           name="room name"
           type="text"
@@ -57,11 +56,11 @@ const CreateRoom = () => {
             </Button>
           : 
             <Button 
-            variant="contained"
-            onClick={() => createRoomHandler(roomName)}
-          >
-            채팅방 만들기
-          </Button> 
+              variant="contained"
+              onClick={() => createRoomHandler(roomName)}
+            >
+              채팅방 만들기
+            </Button> 
           }
         </div>
         <ToastContainer

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, TextField } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
-import enterRoom from '../../api/enterRoom';
+import EnterRoom from '../../api/enterRoom';
 
 const SearchRoom = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const SearchRoom = () => {
   const searchRoomHandler = (roomId) => {
     if(roomId !== "" && memberId !== null) {
         setClick(true);
-        enterRoom(roomId);
+        EnterRoom(roomId);
     } else if(memberId === null) {
         toast.warn(<div><h4>채팅방 검색&입장 실패</h4>로그인이 필요합니다</div>);
     } else {
