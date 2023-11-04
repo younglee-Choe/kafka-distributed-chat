@@ -3,14 +3,21 @@ package leele.kafkadistributedchatserver.kafka.producer;
 import leele.kafkadistributedchatserver.chat.dto.Chat;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Properties;
 
 public class Producer {
+    @Value("${kafka.brokers}")
+    private static String brokers;
+
+    @Value("${kafka.group.id}")
+    private static String groupId;
+
     public static void produce(Chat chat) {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "127.0.0.1:29092,127.0.0.1:39092,127.0.0.1:49092");   // Brokers
-        props.put("group.id", "leele-group");
+        props.put("bootstrap.servers", brokers);
+        props.put("group.id", groupId);
         // Serializer를 사용해 Byte 타입으로 데이터를 직렬화한 후 Kafka에 전송
         props.put("key.serializer" , "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "leele.kafkadistributedchatserver.kafka.serializer.ChatSerializer");

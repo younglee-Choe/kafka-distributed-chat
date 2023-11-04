@@ -4,16 +4,23 @@ import leele.kafkadistributedchatserver.chat.dto.Chat;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
 public class Consumer {
+    @Value("${kafka.brokers}")
+    private static String brokers;
+
+    @Value("${kafka.group.id}")
+    private static String groupId;
+
     public static void consume(String topic) {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "127.0.0.1:29092,127.0.0.1:39092,127.0.0.1:49092");
-        props.put("group.id", "leele-group");
+        props.put("bootstrap.servers", brokers);
+        props.put("group.id", groupId);
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "leele.kafkadistributedchatserver.kafka.deserializer.ChatDeserializer");
         KafkaConsumer<String, Chat> consumer = new KafkaConsumer<>(props);
