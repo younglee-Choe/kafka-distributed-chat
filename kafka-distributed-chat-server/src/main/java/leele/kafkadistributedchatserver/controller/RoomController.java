@@ -17,7 +17,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 @ResponseBody
@@ -31,7 +33,6 @@ public class RoomController {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
-    private Consumer consumer;
 
     @PostMapping("/roomList")
     public ResponseEntity<Map<String, String>> roomList(@RequestBody final Member params) throws JsonProcessingException {
@@ -39,58 +40,45 @@ public class RoomController {
             Member entity = memberRepository.findByMemberId(params.getMemberId());
             Map<String, String> rooms = chatService.findAllRoom(entity);
 
-            System.out.println("✅List of existing rooms: " + rooms);
+            System.out.println("✅[List of existing rooms] " + rooms);
 
             return ResponseEntity.ok(rooms);
         } catch (Exception e) {
-            System.out.println("❗️An exception occurred while loading the chat room list: " + e);
+            System.out.println("❗️An error occurred while loading the chat room list. " + e);
         }
         return ResponseEntity.ok(null);
     }
 
     @PostMapping("/createRoom")
     public ResponseEntity<String> createRoom(Model model, @RequestParam("roomName") String roomName, @RequestParam("memberId") String memberId) {
+        String roomId = null;
         try {
-            chatService.createRoom(roomName, memberId);
+            roomId = chatService.createRoom(roomName, memberId);
         } catch (Exception e) {
-            System.out.println("❗️An exception occurred while creating the chat room: " + e);
+            System.out.println("❗️An error occurred while creating the chat room. " + e);
         }
 
-        return ResponseEntity.ok("Successfully created room");
+        return ResponseEntity.ok(roomId);
     }
 
     @PostMapping("/enter")
     public ResponseEntity<String> enterRoom(Chat chat, @RequestBody final Chat params) {
-        System.out.println("✅[" + params.getMemberName() + "]님이" + "[" + params.getRoomId() + "] 채팅방에 입장하였습니다.");
-
         try {
-            Member entity = memberRepository.findByMemberId(params.getMemberId());
-            Map<String, String> rooms = chatService.findAllRoom(entity);
             Room findRoom = roomRepository.findByRoomId(params.getRoomId());
+            Room room = chatService.buildRoom(params.getRoomId(), findRoom.getRoomName());
+            chatService.insert(room);
+            chatService.setManyToManyRelationships(params.getRoomId(), params.getMemberId());
 
-            if (rooms.containsKey(params.getRoomId())) {
-                System.out.println("✅Already exists");
+            System.out.println("✅[" + params.getMemberName() + "]님이" + "[" + params.getRoomId() + "] 채팅방에 입장하였습니다.");
 
-                // Kafka에서 데이터 불러오기 (Consumer)
-                consumer.consume(params.getRoomId());
+            chat.setMessage(params.getMemberName() + "님이 채팅방에 입장하였습니다.");
+            simpMessagingTemplate.convertAndSend("/sub/chat/" + params.getRoomId(), chat);
 
-                return ResponseEntity.ok("Already exists");
-            } else {
-                System.out.println("✅Does not exist");
-
-                Room room = chatService.buildRoom(params.getRoomId(), findRoom.getRoomName());
-                chatService.insert(room);
-                chatService.setManyToManyRelationships(params.getRoomId(), params.getMemberId());
-
-                chat.setMessage(params.getMemberName() + "님이 채팅방에 입장하였습니다.");
-                simpMessagingTemplate.convertAndSend("/sub/chat/" + params.getRoomId(), chat);
-
-                return ResponseEntity.ok("Does not exist");
-            }
+            return ResponseEntity.ok("Successfully entered the room.");
         } catch (Exception e) {
-            System.out.println("❗️An exception occurred while loading the chat room list: " + e);
+            System.out.println("❗️An error occurred while entering the chat room. " + e);
+            return ResponseEntity.ok("error");
         }
-        return ResponseEntity.ok("Successfully entered the room");
     }
 
     @PostMapping("/memberList")
@@ -99,11 +87,11 @@ public class RoomController {
             Room entity = roomRepository.findByRoomId(params.getRoomId());
             Map<String, String> members = roomService.findAllMember(entity);
 
-            System.out.println("✅List of members in this chat room: " + members);
+            System.out.println("✅[List of members in this chat room] " + members);
 
             return ResponseEntity.ok(members);
         } catch (Exception e) {
-            System.out.println("❗️An exception occurred while loading the chat room list: " + e);
+            System.out.println("❗️An error occurred while retrieving the list of members in the chat room. " + e);
         }
         return ResponseEntity.ok(null);
     }
