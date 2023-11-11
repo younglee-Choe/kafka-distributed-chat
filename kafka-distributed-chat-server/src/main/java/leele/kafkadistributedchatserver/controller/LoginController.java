@@ -62,6 +62,7 @@ public class LoginController {
 
             if(!passwordEncoder.matches(params.getPassword(), dbPassword)) {
                 System.out.println("❌[User] Password does not match! " + params.getPassword() + ", " + dbPassword);
+
                 return ResponseEntity.ok(null);
             } else {
                 System.out.println("[User] Password matches! " + params.getPassword() + ", " + dbPassword);
@@ -76,19 +77,4 @@ public class LoginController {
         }
         return ResponseEntity.ok(null);
     }
-
-//    @GetMapping("/main")
-//    public String main() {
-//        return "main";
-//    }
-//
-//    @GetMapping("/text")
-//    public String text(@AuthenticationPrincipal MemberPrincipalDetails memberPrincipalDetails
-//                        ,Model model) {
-//
-//        Member member = memberPrincipalDetails.getMember();
-//
-//        model.addAttribute("member", member);
-//        return "text";
-//    }
 }
