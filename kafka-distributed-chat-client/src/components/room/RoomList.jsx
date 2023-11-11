@@ -1,12 +1,10 @@
 import '../../css/Room.css';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Grid, List, ListItem, ListItemText, styled } from '@mui/material';
 import axios from 'axios';
 import enterRoom from '../../api/enterRoom';
 
 const RoomList = () => {
-    const navigate = useNavigate();
     const [ chatList, setChatList ] = useState([]);
     const [ selected, setSelected ] = useState("");
 
@@ -25,7 +23,7 @@ const RoomList = () => {
 
     const onClickChatRoomItem = (roomId) => {
         setSelected(roomId);
-        enterRoom(roomId);
+        enterRoom(roomId, true);
     };
 
     useEffect(() => {
@@ -46,7 +44,8 @@ const RoomList = () => {
                     }
                 ]);
             });
-        });
+        })
+        .catch((err) => console.log("An exception occurred while loading the chat room list! ", err));
     }, []);
 
     return (
