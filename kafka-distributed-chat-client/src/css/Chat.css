@@ -120,7 +120,7 @@
   color:rgb(122, 122, 122);
 }
 .message__recipient {
-  background-color: #f5ccc2;
+  background-color: #c2eaf5;
   width: 15rem;
   max-width: 20rem;
   padding: 10px;
@@ -129,7 +129,7 @@
   font-size: 1rem;
 }
 .message__sender {
-  background-color: rgb(194, 243, 194);
+  background-color: rgb(243, 239, 194);
   width: 15rem;
   max-width: 20rem;
   padding: 10px;
