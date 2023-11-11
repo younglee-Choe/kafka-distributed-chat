@@ -1,6 +1,6 @@
 import axios from "axios";
 
-function enterRoom(roomId) {
+function enterRoom(roomId, isReEnter) {
     const memberId = sessionStorage.getItem("memberId");
     const memberName = sessionStorage.getItem("memberName");
     const date = new Date();
@@ -9,6 +9,7 @@ function enterRoom(roomId) {
     const replacePathname = pathname.replace("/sub/chat/", "");
     
     const enterRoomUrl = "/room/enter";
+
     const enterRoomData = {
         roomId: roomId, 
         memberId: memberId,
@@ -16,17 +17,21 @@ function enterRoom(roomId) {
         date: date
     };
 
-    axios.post(enterRoomUrl, enterRoomData, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then((res) => {
-        if (replacePathname !== roomId) {
-            window.location.href = `/sub/chat/${roomId}`;
-        }
-    })
-    .catch((err) => console.log("An error occurred while searching or entering the room! ", err));
+    if (isReEnter && replacePathname !== roomId) {
+        window.location.href = `/sub/chat/${roomId}`;
+    } else if(replacePathname !== roomId) {
+        axios.post(enterRoomUrl, enterRoomData, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((res) => {
+            if (res.data !== "error") {
+                window.location.href = `/sub/chat/${roomId}`;
+            }
+        })
+        .catch((err) => console.log("An error occurred while entering the chat room! ", err));
+    }
 };
 
-export default enterRoom;
+export default enterRoom; 
