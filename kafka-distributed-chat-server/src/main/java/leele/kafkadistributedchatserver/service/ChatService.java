@@ -75,12 +75,14 @@ public class ChatService {
     }
 
     // 랜덤 UUID로 구별 ID를 가진 채팅방 객체를 생성하고 Database에 저장
-    public void createRoom(String roomName, String memberId) {
+    public String createRoom(String roomName, String memberId) {
         String randomId = UUID.randomUUID().toString();
         Room room = buildRoom(randomId, roomName);
         insert(room);
         setManyToManyRelationships(randomId, memberId);
         System.out.println("✅Created a Room! " + room);
+
+        return randomId;
     }
 
     public Room buildRoom(String roomId, String roomName) {
