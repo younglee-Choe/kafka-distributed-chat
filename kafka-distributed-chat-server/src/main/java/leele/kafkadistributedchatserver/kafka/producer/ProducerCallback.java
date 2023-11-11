@@ -17,7 +17,8 @@ public class ProducerCallback implements Callback {
         if(e != null){
             e.printStackTrace();
         } else {
-            System.out.printf("🫧Topic: %s , Partition: %d , Offset: %d, Key: %s, Received Message: %s\n", metadata.topic(), metadata.partition(), metadata.offset(), record.key(), record.value());
+            System.out.printf("🫧[Producer] Topic: %s, Partition: %d, Offset: %d, Key: %s, Received Message: %s\n",
+                    metadata.topic(), metadata.partition(), metadata.offset(), record.key(), record.value());
         }
 
     }
