@@ -19,6 +19,10 @@ public class Chat {
     private String message;
     private Date date;
 
+    public Chat() {
+        // 기본 생성자 추가
+    }
+
     public Chat(String roomId, String roomName, String memberId, String memberName, String message, Date date) {
         this.roomId = roomId;
         this.roomName = roomName;
