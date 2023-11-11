@@ -1,13 +1,12 @@
 import '../../css/Chat.css';
 import 'react-toastify/dist/ReactToastify.css';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button, TextField } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
+import enterRoom from '../../api/enterRoom';
 
 const CreateRoom = () => {
-  const navigate = useNavigate();
   const [ roomName, setRoomName ] = useState('');
   const [ isClick, setClick ] = useState(false);
 
@@ -24,8 +23,8 @@ const CreateRoom = () => {
         }
       })
       .then((res) => {
-        console.log("create room:", res);
-        navigate("/room/roomList");
+        console.log("Successfully created room! The room ID is [", res.data, "]");
+        enterRoom(res.data);
       })
       .catch((err) => console.log("An error occurred while creating the room! ", err));
     } else if(memberId === null) {
