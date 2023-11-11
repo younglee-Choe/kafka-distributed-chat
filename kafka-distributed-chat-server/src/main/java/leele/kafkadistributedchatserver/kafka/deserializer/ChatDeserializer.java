@@ -18,8 +18,15 @@ public class ChatDeserializer implements Deserializer<Chat> {
         ObjectMapper mapper = new ObjectMapper();
         Chat chat = null;
         try {
-            chat = mapper.readValue(data, Chat.class);
+            if(data == null) {
+                System.out.println("❗️Null received at deserializing");
+                return null;
+            } else {
+                System.out.println("Deserializing...");
+                chat = mapper.readValue(data, Chat.class);
+            }
         } catch (IOException e) {
+            System.out.println("❗️Error when deserializing byte[] to Chat DTO");
             e.printStackTrace();
         }
         return chat;
