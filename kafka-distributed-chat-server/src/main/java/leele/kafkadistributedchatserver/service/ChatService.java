@@ -1,8 +1,9 @@
 package leele.kafkadistributedchatserver.service;
 
-import jakarta.annotation.PostConstruct;
 import leele.kafkadistributedchatserver.member.entity.Member;
 import leele.kafkadistributedchatserver.member.repository.MemberRepository;
+import leele.kafkadistributedchatserver.memberRoom.entity.MemberRoom;
+import leele.kafkadistributedchatserver.memberRoom.repository.MemberRoomRepository;
 import leele.kafkadistributedchatserver.room.entity.Room;
 import leele.kafkadistributedchatserver.room.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,25 +11,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class ChatService {
-    private Map<String, ChatRoom> chatRooms;
-
     @Autowired
     private RoomRepository roomRepository;
 
     @Autowired
     private MemberRepository memberRepository;
 
-
-    @PostConstruct
-    private void init() {
-        chatRooms = new LinkedHashMap<>();
-    }
+    @Autowired
+    private MemberRoomRepository memberRoomRepository;
 
     public Room insert(Room room) {
         return roomRepository.save(room);
@@ -52,6 +49,13 @@ public class ChatService {
         // 관계 변경 반영
         memberRepository.save(member);
         roomRepository.save(room);
+
+        // member_room 테이블에 현재 시간(채팅방 입장 시간) 삽입
+        MemberRoom memberRoom = memberRoomRepository.findByMemberAndRoom(member, room);
+        memberRoom.setMember(member);
+        memberRoom.setRoom(room);
+        memberRoom.setJoinDate(LocalDateTime.now());
+        memberRoomRepository.save(memberRoom);
     }
 
     // member가 가진 채팅방 정보
@@ -67,11 +71,6 @@ public class ChatService {
         }
 
         return roomsMap;
-    }
-
-    public ChatRoom findRoomById(String roomId) {
-        System.out.println("✅Find Room By ID: " + roomId);
-        return chatRooms.get(roomId);
     }
 
     // 랜덤 UUID로 구별 ID를 가진 채팅방 객체를 생성하고 Database에 저장
