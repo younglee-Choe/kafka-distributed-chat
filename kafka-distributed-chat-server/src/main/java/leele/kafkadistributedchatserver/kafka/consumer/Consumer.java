@@ -1,6 +1,7 @@
 package leele.kafkadistributedchatserver.kafka.consumer;
 
 import leele.kafkadistributedchatserver.chat.dto.Chat;
+import leele.kafkadistributedchatserver.kafka.process.ProcessChatMessages;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.util.*;
+
+import static leele.kafkadistributedchatserver.kafka.process.ProcessChatMessages.*;
 
 @RestController
 public class Consumer {
@@ -33,11 +36,14 @@ public class Consumer {
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "leele.kafkadistributedchatserver.kafka.deserializer.ChatDeserializer");
 
-        List<Chat> chatList = new ArrayList<>();
         Thread mainThread = Thread.currentThread();
 
         KafkaConsumer<String, Chat> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singletonList(roomId));
+
+        ProcessChatMessages.findJoinDate(roomId, memberId);
+
+        List<Chat> chatList = new ArrayList<>();
 
         // main 스레드 종료 시 별도 thread로 kafkaConsumer wakeup() 메서드를 호출
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -57,20 +63,21 @@ public class Consumer {
                 for (ConsumerRecord<String, Chat> record : records) {
                     System.out.printf("🫧[Consumer] partition = %s, offset = %d, key = %s, value = %s %n",
                             record.partition(), record.offset(), record.key(), record.value());
-
                     chatList.add(record.value());
                 }
 
                 // Kafka에 저장된 모든 메시지 읽은 후 종료
                 if(!chatList.isEmpty() && records.isEmpty()) {
-                    sendDataToRestAPI(chatList, roomId, memberId);
+                    // 시간 순으로 정렬한 후, 채팅방에 처음 입장한 시간 이후의 메시지들로 재구성
+                    List<Chat> newChatList = processMessages(chatList);
+                    sendDataToRestAPI(newChatList, roomId, memberId);
                     break;
                 }
             }
         } catch (WakeupException e) {
             System.out.println("❗️Wakeup exception has been called. " + e);
         } finally {
-            System.out.println("Finally consumer is closing...");
+            System.out.println("⚙️Finally consumer is closing...");
             consumer.close();
         }
     }
