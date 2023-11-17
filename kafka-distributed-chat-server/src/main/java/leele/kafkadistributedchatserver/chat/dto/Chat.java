@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -17,13 +18,13 @@ public class Chat {
     private String memberId;
     private String memberName;
     private String message;
-    private Date date;
+    private LocalDateTime date;
 
     public Chat() {
         // 기본 생성자 추가
     }
 
-    public Chat(String roomId, String roomName, String memberId, String memberName, String message, Date date) {
+    public Chat(String roomId, String roomName, String memberId, String memberName, String message, LocalDateTime date) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.memberId = memberId;
