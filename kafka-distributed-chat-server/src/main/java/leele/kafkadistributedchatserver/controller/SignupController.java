@@ -21,12 +21,12 @@ public class SignupController {
     @ResponseBody
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody final Member params) {
-        try {
-            signupService.register(params);
-        } catch (Exception e) {
-            System.out.println("❗️An exception occurred while signing up: " + e);
-        }
+        Member result = signupService.register(params);
 
-        return ResponseEntity.ok("Successfully registered as a member");
+        if (result == null) {
+            return  ResponseEntity.ok("This ID already exists");
+        } else {
+            return ResponseEntity.ok("Successfully registered as a member");
+        }
     }
 }

@@ -21,16 +21,21 @@ public class SignupService {
     private MemberRepository memberRepository;
 
     public Member register(Member params) {
-        String encryptedPassword = passwordEncoder.encode(params.getPassword());
+        if (memberRepository.findByMemberId(params.getMemberId()) == null) {
+            String encryptedPassword = passwordEncoder.encode(params.getPassword());
 
-        Member member = Member.builder()
-                .memberId(params.getMemberId())
-                .password(encryptedPassword)
-                .memberName(params.getMemberName())
-                .role("ROLE_MEMBER")
-                .joinDate(LocalDateTime.now())
-                .build();
+            Member member = Member.builder()
+                    .memberId(params.getMemberId())
+                    .password(encryptedPassword)
+                    .memberName(params.getMemberName())
+                    .role("ROLE_MEMBER")
+                    .joinDate(LocalDateTime.now())
+                    .build();
 
-        return memberRepository.save(member);
+            return memberRepository.save(member);
+        } else {
+            System.out.println("❗️This ID already exists");
+            return null;
+        }
     }
 }
