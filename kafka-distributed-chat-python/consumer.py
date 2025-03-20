@@ -6,7 +6,7 @@ from openai import AsyncOpenAI
 from aiokafka import AIOKafkaConsumer
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
-from fastapi_server import receive_topic_name, send_response_to_springboot
+from fastapi_server import send_response_to_springboot
 
 load_dotenv()
 
@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 KAFKA_BOOTSTRAP_SERVERS = os.environ.get('KAFKA_BOOTSTRAP_SERVERS')
-KAFKA_CONSUMER_TOPIC = {room_id}   # topic name is {room_id}
+KAFKA_CONSUMER_TOPIC = {topic_name}   # topic name is {room_id}
 
 consumer = AIOKafkaConsumer(
     KAFKA_CONSUMER_TOPIC,
@@ -54,15 +54,17 @@ async def consume_messages():
         async for msg in consumer:
             consumed = msg.value.decode("utf-8")
             print(f"Consumed from Kafka: {consumed}")
-            
-            user_message = json.loads(consumed).get('message')
-            print(f"📩 받은 메시지: {user_message}")
-            
-            # create automated response with gpt-3.5-turbo model
-            response_message = await generate_gpt_response(user_message)
-            print(f"🤖 AI 응답: {response_message}")
-            send_to_springboot = await send_response_to_springboot(response_message)
-            
+                        
+            if json.loads(consumed).get('memberId') != "AI":
+                user_message = json.loads(consumed).get('message')
+                print(f"📩 받은 메시지: {user_message}")
+                
+                # create automated response with gpt-3.5-turbo model
+                response_message = await generate_gpt_response(user_message)
+                print(f"🤖 AI 응답: {response_message}")
+                
+                send_to_springboot = await send_response_to_springboot(response_message)
+                print(f"response from spring boot: {send_to_springboot}") 
     finally:
         await consumer.stop()
         print("⚙️ Consumer Stop")
