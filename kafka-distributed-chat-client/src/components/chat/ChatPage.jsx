@@ -1,7 +1,8 @@
 import '../../css/Chat.css';
 import React, { useRef, useState, useEffect } from "react";
 import { useParams } from "react-router-dom"; 
-import * as StompJs from "@stomp/stompjs";
+// import * as StompJs from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import ChatBody from './ChatBody';
 import RoomList from '../room/RoomList';
 import axios from 'axios';
@@ -25,7 +26,8 @@ function ChatPage() {
     const historyUrl = "/chat/history/" + memberId;
 
     const connect = () => { // 연결할 때
-      client.current = new StompJs.Client({
+      // client.current = new StompJs.Client({
+        client.current = new Client({
         brokerURL: "ws://localhost:8080/ws",
         onConnect: () => {
           console.log("Successful connection!", roomId);
@@ -45,8 +47,32 @@ function ChatPage() {
       subscription.unsubscribe();
       if (!client.current.connected) return; // 연결되지 않았으면 메시지를 보내지 않음
       console.log("publish: ", message);
+
+      if(message.includes("#문서")) {
+        axios.post("http://127.0.0.1:8000/idp/query", 
+          { queryMsg: message }, 
+          { headers: { "Content-Type": "application/json" }}
+        )
+          .then(response => {
+            if(response.data) {
+              setFiles(null);
+              console.log("✅ " + JSON.stringify(response.data));
+            }
+          })
+          .catch((error) => {
+            alert("[쿼리 실패] " + error);
+            if (error.response) {
+              console.error("📌 상태 코드:", error.response.status);
+              console.error("📌 응답 데이터:", error.response.data);
+            } else if (error.request) {
+              console.error("📌 요청 자체가 서버에 도달하지 못함:", error.request);
+            } else {
+              console.error("📌 설정 문제:", error.message);
+            }
+          })
+      } 
       client.current.publish({
-        destination: '/pub/chat',
+        destination: "/pub/chat",
         body: JSON.stringify({
           roomId: roomId,
           memberId: memberId,
@@ -55,7 +81,7 @@ function ChatPage() {
           date: date,
         }),
       });
-  
+      
       setMessages('');
     };
 
@@ -123,18 +149,23 @@ function ChatPage() {
         // Post 요청에 함께 보낼 formData 작성(입력한 파일 추가)
         for (let i = 0; i < files.length; i++) {
           formData.append("files", files[i]);
+          publish(files[i].name);
         }
         // Fast API로 요청(업로드)
-        axios.post("http://localhost:8000/file/upload", formData, 
+        axios.post("http://127.0.0.1:8000/idp/upload/file", formData, 
           {headers: { "Content-Type": "multipart/form-data" }})
           .then(response => {
             if(response.data) {
+              // publish(response.data.name);
               setFiles(null);
-              alert("✅ " + response.data.message);
+              alert("✅" + response.data.message);
             }
           })
           .catch((error) => {
-            alert("업로드 실패: " + error);
+            alert("[파일 업로드 실패] " + error);
+            if(error.response.data.detail.includes("400: 지원되지 않는 파일 형식")) {
+              alert("지원되지 않는 파일 형식입니다");
+            }
           })
       } 
       // 입력한 파일이 한 개도 없을 경우 
@@ -180,7 +211,7 @@ function ChatPage() {
                 multiple
                 style={{ display: 'none' }}
               />
-              <button id="uploadBtnClick" onClick={clickUploadBtn}>파일 선택</button>
+              <button id="uploadBtnClick" onClick={clickUploadBtn} className="select-button">파일 선택</button>
               {files && (files.length >= 1 ) ? (
                 <div className="file-list">
                   <ul>
@@ -200,17 +231,21 @@ function ChatPage() {
                 파일 업로드
               </button>
             </div>
-            <form className="form" onSubmit={(e) => handleSubmit(e, message)}>
-              <input
-                type="text"
-                placeholder="메시지 입력"
-                className="message"
-                value={message}
-                onChange={handleChange}
-                // onKeyDown={handleTyping}
-              />
-              <button className="sendBtn">보내기</button>
-            </form>
+            <div className="form__container">
+              <form className="form" onSubmit={(e) => handleSubmit(e, message)}>
+                <div className="msg_input__container">
+                  <input
+                    type="text"
+                    placeholder="메시지 입력"
+                    className="message"
+                    value={message}
+                    onChange={handleChange}
+                    // onKeyDown={handleTyping}
+                  />
+                </div>
+                <button className="sendBtn">보내기</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
