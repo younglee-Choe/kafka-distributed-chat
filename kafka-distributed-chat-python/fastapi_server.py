@@ -11,16 +11,6 @@ app = FastAPI()
 
 SPRING_BOOT_URL = os.environ.get('SPRING_BOOT_URL')
 
-class TopicName(BaseModel):
-    text: str
-    
-# Spring Boot -> FastAPI, Topic Name 전송 받음
-@app.post("/chat/topic")
-async def receive_topic_name(message: TopicName):
-    print(f"📌 Received from Spring Boot: {message.text}")
-    
-    return {"status": "success", "message": f"Received: {message.text}"}
-
 # FastAPI -> Spring Boot, 생성된 AI 응답 전송
 @app.post("/chat/response")
 async def send_response_to_springboot(message: str):
