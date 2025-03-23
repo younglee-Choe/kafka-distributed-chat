@@ -35,13 +35,14 @@ public class ChatController {
 
         // simpMessagingTemplate.convertAndSend를 통해 /sub/chat/{roomId} 채널을 구독 중인 클라이언트에게 메시지를 전송
         simpMessagingTemplate.convertAndSend("/sub/chat/entry/" + chat.getRoomId(), chat);
+
+        topicName = chat.getRoomId();
     }
 
     @MessageMapping("/chat")
     public void sendMessage(Chat chat){
         System.out.println("✉️[Chat]: " + chat);
         simpMessagingTemplate.convertAndSend("/sub/chat/" + chat.getRoomId(), chat);
-        topicName = chat.getRoomId();
 
         // Kafka에 지속적으로 메시지 저장
         Producer.produce(chat);
@@ -57,13 +58,22 @@ public class ChatController {
             return ResponseEntity.ok("An error occurred while reading a message from Kafka.");
         }
 
+        topicName = roomId;
+        setTopicName(topicName);
+
         return ResponseEntity.ok("Successfully completed reading messages from Kafka.");
     }
 
+    @GetMapping("/get")
+    public String getTopicName() {
+        return "현재 topicName: " + chatClient.getTopicName();
+    }
+
     // Spring Boot -> FastAPI, Topic name(Rood ID) 전송
-    @PostMapping("/chat/topic")
-    public Mono<String> sendTopicName(@RequestBody Chat chat) {
-        return chatClient.sendTopicNameToFastAPI(chat.getRoomId());
+    @PostMapping("/set")
+    public String setTopicName(@RequestParam String topicName) {
+        chatClient.setTopicName(topicName);
+        return "topicName이 설정되었습니다: " + topicName;
     }
 
     // FastAPI -> Spring Boot, 생성된 AI 응답
@@ -84,6 +94,7 @@ public class ChatController {
         simpMessagingTemplate.convertAndSend("/sub/chat/" + chat.getRoomId(), chat);
 
         // AI 응답 Kafka에 저장하는 코드
+        Producer.produce(chat);
 
         return ResponseEntity.ok("Received successfully!");
     }
